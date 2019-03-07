@@ -1,23 +1,27 @@
-'use strict';
+"use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.install = exports.videoPlayer = exports.videojs = undefined;
 
-var _video = require('video.js');
+var _video = require("video.js");
 
 var _video2 = _interopRequireDefault(_video);
 
-var _objectAssign = require('object-assign');
+var _objectAssign = require("object-assign");
 
 var _objectAssign2 = _interopRequireDefault(_objectAssign);
+
+var _deepEqual = require("deep-equal");
+
+var _deepEqual2 = _interopRequireDefault(_deepEqual);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
-var DEFAULT_EVENTS = ['loadeddata', 'canplay', 'canplaythrough', 'play', 'pause', 'waiting', 'playing', 'ended', 'error'];
+var DEFAULT_EVENTS = ["loadeddata", "canplay", "canplaythrough", "play", "pause", "waiting", "playing", "ended", "error"];
 
 var videoPlayerDirective = function videoPlayerDirective(globalOptions) {
   globalOptions.events = globalOptions.events || [];
@@ -27,45 +31,44 @@ var videoPlayerDirective = function videoPlayerDirective(globalOptions) {
     var instanceName = null;
     if (binding.arg) {
       instanceName = binding.arg;
-    } else if (vnode.data.attrs && (vnode.data.attrs.instanceName || vnode.data.attrs['instance-name'])) {
-      instanceName = vnode.data.attrs.instanceName || vnode.data.attrs['instance-name'];
+    } else if (vnode.data.attrs && (vnode.data.attrs.instanceName || vnode.data.attrs["instance-name"])) {
+      instanceName = vnode.data.attrs.instanceName || vnode.data.attrs["instance-name"];
     } else if (el.id) {
       instanceName = el.id;
     }
-    return instanceName || 'player';
+    return instanceName || "player";
   };
 
   var repairDom = function repairDom(el) {
     if (!el.children.length) {
-      var video = document.createElement('video');
-      video.className = 'video-js';
+      var video = document.createElement("video");
+      video.className = "video-js";
       el.appendChild(video);
     }
   };
 
   var initPlayer = function initPlayer(el, binding, vnode) {
-
     var self = vnode.context;
     var attrs = vnode.data.attrs || {};
     var options = binding.value || {};
     var instanceName = getInstanceName(el, binding, vnode);
-    var customEventName = attrs.customEventName || 'statechanged';
+    var customEventName = attrs.customEventName || "statechanged";
     var player = self[instanceName];
 
     var componentEvents = attrs.events || [];
     var playsinline = attrs.playsinline || false;
 
     if (playsinline) {
-      el.children[0].setAttribute('playsinline', playsinline);
-      el.children[0].setAttribute('webkit-playsinline', playsinline);
-      el.children[0].setAttribute('x5-playsinline', playsinline);
-      el.children[0].setAttribute('x5-video-player-type', 'h5');
-      el.children[0].setAttribute('x5-video-player-fullscreen', false);
+      el.children[0].setAttribute("playsinline", playsinline);
+      el.children[0].setAttribute("webkit-playsinline", playsinline);
+      el.children[0].setAttribute("x5-playsinline", playsinline);
+      el.children[0].setAttribute("x5-video-player-type", "h5");
+      el.children[0].setAttribute("x5-video-player-fullscreen", false);
     }
 
     if (attrs.crossOrigin) {
       el.children[0].crossOrigin = attrs.crossOrigin;
-      el.children[0].setAttribute('crossOrigin', attrs.crossOrigin);
+      el.children[0].setAttribute("crossOrigin", attrs.crossOrigin);
     }
 
     if (!player) {
@@ -81,7 +84,7 @@ var videoPlayerDirective = function videoPlayerDirective(globalOptions) {
             vertical: true
           }
         },
-        techOrder: ['html5'],
+        techOrder: ["html5"],
         plugins: {}
       }, globalOptions.options, options);
 
@@ -110,8 +113,8 @@ var videoPlayerDirective = function videoPlayerDirective(globalOptions) {
 
         var onEdEvents = {};
         for (var i = 0; i < events.length; i++) {
-          if (typeof events[i] === 'string' && onEdEvents[events[i]] === undefined) {
-            (function (event) {
+          if (typeof events[i] === "string" && onEdEvents[events[i]] === undefined) {
+            ;(function (event) {
               onEdEvents[event] = null;
               _this.on(event, function () {
                 emitPlayerState(event, true);
@@ -120,11 +123,11 @@ var videoPlayerDirective = function videoPlayerDirective(globalOptions) {
           }
         }
 
-        this.on('timeupdate', function () {
-          emitPlayerState('timeupdate', this.currentTime());
+        this.on("timeupdate", function () {
+          emitPlayerState("timeupdate", this.currentTime());
         });
 
-        emitPlayerState('ready');
+        emitPlayerState("ready");
       });
     }
   };
@@ -134,7 +137,7 @@ var videoPlayerDirective = function videoPlayerDirective(globalOptions) {
     var instanceName = getInstanceName(el, binding, vnode);
     var player = self[instanceName];
     if (player && player.dispose) {
-      if (player.techName_ !== 'Flash') {
+      if (player.techName_ !== "Flash") {
         player.pause && player.pause();
       }
       player.dispose();
@@ -152,7 +155,9 @@ var videoPlayerDirective = function videoPlayerDirective(globalOptions) {
     },
     update: function update(el, binding, vnode) {
       var options = binding.value || {};
-      disposePlayer(el, binding, vnode);
+      if (!(0, _deepEqual2.default)(binding.oldValue, binding.value)) {
+        disposePlayer(el, binding, vnode);
+      }
       if (options && options.sources && options.sources.length) {
         initPlayer(el, binding, vnode);
       }
@@ -170,7 +175,7 @@ var install = function install(Vue) {
     events: []
   };
 
-  Vue.directive('video-player', videoPlayerDirective(globalOptions));
+  Vue.directive("video-player", videoPlayerDirective(globalOptions));
 };
 
 var VueVideoPlayer = { videojs: _video2.default, videoPlayer: videoPlayer, install: install };
