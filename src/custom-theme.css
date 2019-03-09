@@ -39,6 +39,10 @@
   display: block;
 }
 
+.video-js.vjs-paused .vjs-big-play-button {
+  display: none !important;
+}
+
 .vjs-custom-skin > .video-js .vjs-load-progress div,
 .vjs-seeking .vjs-big-play-button,
 .vjs-waiting .vjs-big-play-button {
