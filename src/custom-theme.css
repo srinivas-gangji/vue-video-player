@@ -39,7 +39,7 @@
   display: block;
 }
 
-.video-js.vjs-paused .vjs-big-play-button {
+.video-js.vjs-paused.vjs-has-started .vjs-big-play-button {
   display: none !important;
 }
 
